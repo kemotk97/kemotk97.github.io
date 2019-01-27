@@ -7,7 +7,7 @@ var Game_Over = {
 
     create : function() {
 
-        // Po przycisnieciu przycisku uruchamia grę
+        // Po kliknięciu uruchamia grę
         this.add.button(0, 0, 'gameover', this.startGame, this);
 
         // Wynik
