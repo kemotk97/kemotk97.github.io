@@ -29,31 +29,31 @@ var Game = {
 
         game.stage.backgroundColor = '#9bc604';
 
-        // Generate the initial snake stack. Our snake will be 10 elements long.
-        for(var i = 0; i < 10; i++){
-            snake[i] = game.add.sprite(150+i*squareSize, 150, 'snake');  // Parameters are (X coordinate, Y coordinate, image)
+        // Początkowa długość węża
+        for(var i = 0; i < 5; i++){
+            snake[i] = game.add.sprite(150+i*squareSize, 150, 'snake');  
         }
 
 
-        // Genereate the first apple.
+        // Generowanie pierwszego jabłka
         this.generateApple();
 
-        // Add Text to top of game.
+        // Tekst na górze ekranu
         textStyle_Key = { font: "bold 14px sans-serif", fill: "#46c0f9", align: "center" };
         textStyle_Value = { font: "bold 18px sans-serif", fill: "#fff", align: "center" };
 
-        // Score.
-        game.add.text(30, 20, "SCORE", textStyle_Key);
+        // Wynik
+        game.add.text(30, 20, "WYNIK", textStyle_Key);
         scoreTextValue = game.add.text(90, 18, score.toString(), textStyle_Value);
-        // Speed.
-        game.add.text(500, 20, "SPEED", textStyle_Key);
+        // Prędkość
+        game.add.text(500, 20, "PRĘDKOŚĆ", textStyle_Key);
         speedTextValue = game.add.text(558, 18, speed.toString(), textStyle_Value);
 
     },
 
     update: function() {
 
-        // Handle arrow key presses, while not allowing illegal direction changes that will kill the player.
+        // Zmiana kierunku
 
         if (cursors.right.isDown && direction!='left')
         {
@@ -72,40 +72,29 @@ var Game = {
             new_direction = 'down';
         }
 
-        // A formula to calculate game speed based on the score.
-        // The higher the score, the higher the game speed, with a maximum of 10;
+        // Zwiększanie prędkości węża na podstawie punktów
         speed = Math.min(10, Math.floor(score/5));
-        // Update speed value on game screen.
         speedTextValue.text = '' + speed;
-
-        // Since the update function of Phaser has an update rate of around 60 FPS,
-        // we need to slow that down make the game playable.
-
-        // Increase a counter on every update call.
+        
         updateDelay++;
-
-        // Do game stuff only if the counter is aliquot to (10 - the game speed).
-        // The higher the speed, the more frequently this is fulfilled,
-        // making the snake move faster.
         if (updateDelay % (10 - speed) == 0) {
 
 
-            // Snake movement
+            // Poruszanie się węża
 
             var firstCell = snake[snake.length - 1],
                 lastCell = snake.shift(),
                 oldLastCellx = lastCell.x,
                 oldLastCelly = lastCell.y;
 
-            // If a new direction has been chosen from the keyboard, make it the direction of the snake now.
+            // Po naciśnięciu klawisza wąż zmienia kierunek na odpowiedni
             if(new_direction){
                 direction = new_direction;
                 new_direction = null;
             }
 
 
-            // Change the last cell's coordinates relative to the head of the snake, according to the direction.
-
+            // Zmiana lokalizacji ostatniej komórki węża w odniesieniu do głowy na podstawie kierunku
             if(direction == 'right'){
 
                 lastCell.x = firstCell.x + 15;
@@ -124,31 +113,28 @@ var Game = {
                 lastCell.y = firstCell.y + 15;
             }
 
-
-            // Place the last cell in the front of the stack.
-            // Mark it as the first cell.
-
+            // Przeniesienie ostatniej komórki na początek
             snake.push(lastCell);
             firstCell = lastCell;
 
-            // End of snake movement.
 
 
 
-            // Increase length of snake if an apple had been eaten.
-            // Create a block in the back of the snake with the old position of the previous last block (it has moved now along with the rest of the snake).
+
+            // Wydłużanie węża po zjedzeniu jabłka, dodanie kolejnej komórki węża na końcu
+            // 
             if(addNew){
                 snake.unshift(game.add.sprite(oldLastCellx, oldLastCelly, 'snake'));
                 addNew = false;
             }
 
-            // Check for apple collision.
+            // Kolizja z jabłkiem
             this.appleCollision();
 
-            // Check for collision with self. Parameter is the head of the snake.
+            // Kolizja z samym sobą
             this.selfCollision(firstCell);
 
-            // Check with collision with wall. Parameter is the head of the snake.
+            // Kolizja ze ścianą
             this.wallCollision(firstCell);
         }
 
@@ -157,37 +143,32 @@ var Game = {
 
     generateApple: function(){
 
-        // Chose a random place on the grid.
-        // X is between 0 and 585 (39*15)
-        // Y is between 0 and 435 (29*15)
-
+        // Generowanie jabłka w losowym miejscu planszy
         var randomX = Math.floor(Math.random() * 40 ) * squareSize,
             randomY = Math.floor(Math.random() * 30 ) * squareSize;
 
-        // Add a new apple.
         apple = game.add.sprite(randomX, randomY, 'apple');
     },
 
     appleCollision: function() {
 
-        // Check if any part of the snake is overlapping the apple.
-        // This is needed if the apple spawns inside of the snake.
+        // Kolizja z jabłkiem, sprawdzenie czy jabłko nie pojawiło się pod wężem
         for(var i = 0; i < snake.length; i++){
             if(snake[i].x == apple.x && snake[i].y == apple.y){
 
-                // Next time the snake moves, a new block will be added to its length.
+                // Przy kolejnym przesunięciu się węża dodajemy kolejną jego komórkę
                 addNew = true;
 
-                // Destroy the old apple.
+                // Usunięcie zjedzonego jabłka
                 apple.destroy();
 
-                // Make a new one.
+                // Stworzenie nowego
                 this.generateApple();
 
-                // Increase score.
+                // Zwiększenie punktów
                 score++;
 
-                // Refresh scoreboard.
+                // Odświeżenie tablicy wyników
                 scoreTextValue.text = score.toString();
 
             }
@@ -197,11 +178,11 @@ var Game = {
 
     selfCollision: function(head) {
 
-        // Check if the head of the snake overlaps with any part of the snake.
+        // Sprawdzenie czy głowa węża nie nachodzi na jego resztę
         for(var i = 0; i < snake.length - 1; i++){
             if(head.x == snake[i].x && head.y == snake[i].y){
 
-                // If so, go to game over screen.
+                // Jeśli tak, gra się kończy
                 game.state.start('Game_Over');
             }
         }
@@ -210,12 +191,12 @@ var Game = {
 
     wallCollision: function(head) {
 
-        // Check if the head of the snake is in the boundaries of the game field.
+        // Sprawdzenie czy głowa węża znajduje się w polu gry (nie wychodzi poza ściany)
 
         if(head.x >= 600 || head.x < 0 || head.y >= 450 || head.y < 0){
 
 
-            // If it's not in, we've hit a wall. Go to game over screen.
+            // Jeżeli dotknie ściany gra się kończy
             game.state.start('Game_Over');
         }
 
