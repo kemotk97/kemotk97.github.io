@@ -46,8 +46,8 @@ var Game = {
         game.add.text(30, 20, "WYNIK", textStyle_Key);
         scoreTextValue = game.add.text(90, 18, score.toString(), textStyle_Value);
         // Prędkość
-        game.add.text(500, 20, "PRĘDKOŚĆ", textStyle_Key);
-        speedTextValue = game.add.text(558, 18, speed.toString(), textStyle_Value);
+        game.add.text(450, 20, "PRĘDKOŚĆ", textStyle_Key);
+        speedTextValue = game.add.text(550, 18, speed.toString(), textStyle_Value);
 
     },
 
