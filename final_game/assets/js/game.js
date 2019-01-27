@@ -39,8 +39,8 @@ var Game = {
         this.generateApple();
 
         // Tekst na górze ekranu
-        textStyle_Key = { font: "bold 14px sans-serif", fill: "#46c0f9", align: "center" };
-        textStyle_Value = { font: "bold 18px sans-serif", fill: "#fff", align: "center" };
+        textStyle_Key = { font: "bold 14px sans-serif", fill: "#ffffff", align: "center" };
+        textStyle_Value = { font: "bold 18px sans-serif", fill: "#ffffff", align: "center" };
 
         // Wynik
         game.add.text(30, 20, "WYNIK", textStyle_Key);
